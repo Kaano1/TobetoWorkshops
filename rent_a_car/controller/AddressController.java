@@ -1,10 +1,13 @@
 package com.tobeto.spring.b.controller;
 
+import com.tobeto.spring.b.dtos.request.address.AddAddressRequest;
+import com.tobeto.spring.b.dtos.request.address.UpdateAddressRequest;
+import com.tobeto.spring.b.dtos.response.address.GetAddressListResponse;
+import com.tobeto.spring.b.dtos.response.address.GetAddressResponse;
 import com.tobeto.spring.b.entities.Address;
 import com.tobeto.spring.b.repositories.AddressRepository;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("api/address")
@@ -18,20 +21,32 @@ public class AddressController
     }
 
     @GetMapping("{id}")
-    public Address getById(@PathVariable int id)
+    public GetAddressResponse getById(@PathVariable int id)
     {
-        return ( this.addressRepository.findById(id).orElseThrow() );
+        GetAddressResponse dto = new GetAddressResponse();
+        Address address = this.addressRepository.findById(id).orElseThrow();
+        dto.setCity(address.getCity());
+        dto.setTown(address.getTown());
+        dto.setCountry(address.getCountry());
+        return dto;
     }
 
     @GetMapping
-    public List<Address> getByAll()
+    public GetAddressListResponse getByAll()
     {
-        return ( this.addressRepository.findAll() );
+        GetAddressListResponse dto = new GetAddressListResponse();
+        dto.setAddresses(addressRepository.findAll());
+        return dto;
     }
 
     @PostMapping
-    public void add(@RequestBody Address address)
+    public void add(@RequestBody AddAddressRequest addressRequest)
     {
+        Address address = new Address();
+
+        address.setCity(addressRequest.getCity());
+        address.setCountry(addressRequest.getCountry());
+        address.setTown(addressRequest.getTown());
         this.addressRepository.save(address);
     }
 
@@ -43,8 +58,14 @@ public class AddressController
     }
 
     @PutMapping
-    public void update(@RequestBody Address address)
+    public void update(@RequestBody UpdateAddressRequest addressRequest)
     {
-        address.setId(1);
+        Address addressToUpdate = addressRepository.findById(addressRequest.getId()).orElseThrow();
+        addressToUpdate.setId(addressRequest.getId());
+        addressToUpdate.setCity(addressRequest.getCity());
+        addressToUpdate.setTown(addressRequest.getTown());
+        addressToUpdate.setCountry(addressRequest.getCountry());
+        addressToUpdate.setCustomer(addressRequest.getCustomer());
+        addressRepository.save(addressToUpdate);
     }
 }

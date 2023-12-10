@@ -1,10 +1,12 @@
 package com.tobeto.spring.b.controller;
 
+import com.tobeto.spring.b.dtos.request.customer.AddCustomerRequest;
+import com.tobeto.spring.b.dtos.request.customer.UpdateCustomerRequest;
+import com.tobeto.spring.b.dtos.response.customer.GetCustomerListResponse;
+import com.tobeto.spring.b.dtos.response.customer.GetCustomerResponse;
 import com.tobeto.spring.b.entities.Customer;
 import com.tobeto.spring.b.repositories.CustomerRepository;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("api/customer")
@@ -18,27 +20,48 @@ public class CustomerController
     }
 
     @GetMapping
-    public List<Customer> getByAll()
+    public GetCustomerListResponse getByAll()
     {
-        return this.customerRepository.findAll();
+        GetCustomerListResponse getCustomerListResponse = new GetCustomerListResponse();
+        getCustomerListResponse.setCustomers(this.customerRepository.findAll());
+        return getCustomerListResponse;
     }
 
     @GetMapping("{id}")
-    public Customer getById(@PathVariable int id)
+    public GetCustomerResponse getById(@PathVariable int id)
     {
-        return this.customerRepository.findById(id).orElseThrow();
+        GetCustomerResponse getCustomerResponse = new GetCustomerResponse();
+        Customer customer = this.customerRepository.findById(id).orElseThrow();
+        getCustomerResponse.setGmail(customer.getGmail());
+        getCustomerResponse.setName(customer.getName());
+        getCustomerResponse.setSurname(customer.getSurname());
+        getCustomerResponse.setPhoneNumber(customer.getPhoneNumber());
+        return getCustomerResponse;
     }
 
     @PostMapping
-    public void add(@RequestBody Customer customer)
+    public void add(@RequestBody AddCustomerRequest addCustomerRequest)
     {
-        this.customerRepository.save(customer);
+        Customer add = new Customer();
+        add.setName(addCustomerRequest.getName());
+        add.setGmail(addCustomerRequest.getGmail());
+        add.setSurname(addCustomerRequest.getSurname());
+        add.setPhoneNumber(addCustomerRequest.getPhoneNumber());
+        add.setAddresss(addCustomerRequest.getAddresss());
+        this.customerRepository.save(add);
     }
 
     @PutMapping
-    public void update(@RequestBody Customer customer)
+    public void update(@RequestBody UpdateCustomerRequest customerRequest)
     {
-        customer.setId(1);
+        Customer customerToUpdate = customerRepository.findById(customerRequest.getId()).orElseThrow();
+        customerToUpdate.setId(customerRequest.getId());
+        customerToUpdate.setName(customerRequest.getName());
+        customerToUpdate.setGmail(customerRequest.getGmail());
+        customerToUpdate.setSurname(customerRequest.getSurname());
+        customerToUpdate.setPhoneNumber(customerRequest.getPhoneNumber());
+        customerToUpdate.setAddresss(customerRequest.getAddresss());
+        customerRepository.save(customerToUpdate);
     }
 
     @DeleteMapping("{id}")

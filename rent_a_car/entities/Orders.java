@@ -2,6 +2,8 @@ package com.tobeto.spring.b.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+
 
 @Entity
 @Data
@@ -24,5 +26,8 @@ public class Orders {
     @ManyToOne
     @JoinColumn(name = "customer_id")
     private Customer customers;
+
+    @Column(name="order_date")
+    private LocalDate orderDate;
 
 }

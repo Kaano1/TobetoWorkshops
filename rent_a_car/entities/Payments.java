@@ -16,18 +16,18 @@ public class Payments {
     @Id
     @Column(name="id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int id;
+    private int id;
 
     @ManyToOne
     @JoinColumn(name="agreement")
-    public Orders agreement;
+    private Orders agreement;
 
     @Column(name = "pay_method")
-    public String payMethod;
+    private String payMethod;
 
     @Column(name = "pay_amount")
-    public int amount;
+    private int amount;
 
     @Column(name = "card_number")
-    public int cardNumber;
+    private int cardNumber;
 }
