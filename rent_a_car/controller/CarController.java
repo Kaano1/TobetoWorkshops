@@ -1,65 +1,50 @@
 package com.tobeto.spring.b.controller;
 
 
-import com.tobeto.spring.b.dtos.request.car.AddCarRequest;
-import com.tobeto.spring.b.dtos.request.car.UpdateCarRequest;
-import com.tobeto.spring.b.dtos.response.car.GetCarListResponse;
-import com.tobeto.spring.b.dtos.response.car.GetCarResponse;
-import com.tobeto.spring.b.entities.Car;
-import com.tobeto.spring.b.repositories.CarRepository;
+import com.tobeto.spring.b.services.concretes.CarManager;
+import com.tobeto.spring.b.services.dtos.request.car.AddCarRequest;
+import com.tobeto.spring.b.services.dtos.request.car.UpdateCarRequest;
+import com.tobeto.spring.b.services.dtos.response.car.GetCarListResponse;
+import com.tobeto.spring.b.services.dtos.response.car.GetCarResponse;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/car")
 public class CarController {
-    private final CarRepository carRepository;
+    private final CarManager carManager;
 
-    public CarController(CarRepository carRepository)
+    public CarController(CarManager carManager)
     {
-        this.carRepository = carRepository;
+        this.carManager = carManager;
     }
 
     @GetMapping
     public GetCarListResponse getAll()
     {
-        GetCarListResponse carListResponse = new GetCarListResponse();
-        carListResponse.setCars(this.carRepository.findAll());
-        return carListResponse;
+        return carManager.getAll();
     }
 
     @GetMapping("{id}")
     public GetCarResponse getById(@PathVariable int id)
     {
-        GetCarResponse getCarResponse = new GetCarResponse();
-        Car car = this.carRepository.findById(id).orElseThrow();
-        getCarResponse.setModelName(car.getModelName());
-        getCarResponse.setModelYear(car.getModelYear());
-        return getCarResponse;
+        return carManager.getById(id);
     }
 
     @PostMapping
     public void add(@RequestBody AddCarRequest addCarRequest)
     {
-        Car car = new Car();
-        car.setModelName(addCarRequest.getModelName());
-        car.setModelYear(addCarRequest.getModelYear());
-        this.carRepository.save(car);
+        carManager.add(addCarRequest);
     }
 
     @PutMapping
     public void update(@RequestBody UpdateCarRequest carRequest)
     {
-        Car carToUpdate = carRepository.findById(carRequest.getId()).orElseThrow();
-        carToUpdate.setId(carRequest.getId());
-        carToUpdate.setModelName(carRequest.getModelName());
-        carToUpdate.setModelYear(carRequest.getModelYear());
-        carRepository.save(carToUpdate);
+        carManager.update(carRequest);
     }
 
     @DeleteMapping("{id}")
     public void delete(@PathVariable int id)
     {
-        Car car = this.carRepository.findById(id).orElseThrow();
-        carRepository.delete(car);
+        carManager.delete(id);
     }
 }
