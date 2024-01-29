@@ -14,6 +14,7 @@ function Homepage()
 		}
 	  };
 	axiosGet();
+
 	return <>
 		<h1>Homepage</h1>
 	</>
