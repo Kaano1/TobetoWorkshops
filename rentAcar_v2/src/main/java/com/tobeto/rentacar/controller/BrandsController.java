@@ -6,4 +6,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/brands")
 public class BrandsController {
+    
+    @RequestMapping()
+    void    getByAll()
+    {
+
+    }
+
 }
